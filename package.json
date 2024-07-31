@@ -1,0 +1,16 @@
+{
+  "name": "ai-placeholder-generator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "turbo dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "turbo": "^2.0.10"
+  },
+  "packageManager": "pnpm@9.6.0"
+}
