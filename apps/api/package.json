@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "esbuild src/server.ts --bundle --sourcemap --platform=node --outdir=dist && node dist/server.js",
-    "build": "esbuild src/server.ts --bundle --sourcemap --platform=node  --minify --outdir=dist"
+    "dev": "esbuild --bundle ./src/server.js --external:esbuild --outdir=dist --platform=node --target=node20 --sourcemap && node dist/server.js",
+    "build": "esbuild --bundle ./src/server.js --external:esbuild --outdir=dist --platform=node --target=node20 --sourcemap"
   },
   "keywords": [],
   "author": "",
