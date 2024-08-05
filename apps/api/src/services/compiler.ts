@@ -23,42 +23,32 @@ const extractFirstCodeBlock = (input: string) => {
 };
 
 
-const getAIGeneratedComponent = async (code: string, key: string) => {
-    console.log("KEY:", key)
+const getAIGeneratedComponent = async (payload: string, mode: string, key: string) => {
 
     const openAI = createOpenAI({
         apiKey: key
     })
 
     const { text } = await generateText({
-        model: openAI('gpt-4-turbo'),
+        model: openAI('gpt-4o-2024-05-13'),
         temperature: 0,
         maxTokens: 1000,
-        messages: [
-            {
-                role: 'system',
-                content: `
-            You are a programming assistant.
-            You are going to recieve a react component either in Typescript or Javascript.
-            Create a react component using Tailwind.
-            You are only going to reply with the component code. Don't output any extra text.
-            The component you generate will not add any dependency other than anything that is needed from React.
-            Do it using the animation from tailwind animate-pulse.
-            Don't add any useState or useEffect hooks.
-            You are just going to create a loading placeholder component that will be displayed while the data from the real component
-            is being fetched.
-            Don't add any text that says loading. Just created the loading component and substitute the elements of the real components
-            with elements using the animate-pulse animation to give a loading look and feel.
-            The code block should be a jsx code block.
-            Don't use any other color than gray-300.
-            Don't import any other components.
+        prompt: `
+        ${payload}
+
+        I want a placeholder component in ReactJS using Tailwind CSS. 
+
+        The placeholder needs to be done from the ${mode === 'code' ? 'code' : 'image'} sent.
+        I just want the output of the jsx file. No extra text.
+
+        I just want the placeHolder component. Don't do any extra components.
+        Use only the color gray-300 for the components and gray-100 for the background
+        Don't include any components or dependency.
+        Substitute the elements in the code with divs that match the width and height and the placement of them but use tailwind animate-pulse to create the loading animation on the elements.
+        export the component as default
+        ${mode === 'image' && 'Think of the image as the component that we need to create the placeholder for. You have to match the number of items on the image and create a layout as similar as possible'}
         `
-            },
-            {
-                role: 'user',
-                content: code
-            }
-        ]
+
     })
 
     return text
@@ -119,13 +109,14 @@ const esbuildCompile = async (code: string) => {
 };
 
 export const CompilerService = {
-    compileCode: async (code: string, key: string) => {
+    compileCode: async (payload: string, mode: string, key: string) => {
 
         let generatedCode = null
 
         try {
-            generatedCode = await getAIGeneratedComponent(code, key)
+            generatedCode = await getAIGeneratedComponent(payload, mode, key)
             generatedCode = extractFirstCodeBlock(generatedCode);
+            console.log("GENERATED CODE:", generatedCode)
         } catch (e) {
             console.error("Error generating the code with the AI", e)
             throw e
